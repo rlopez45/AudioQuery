@@ -1,0 +1,13 @@
+documentation format:
+Module input
+description and data type
+Module output
+description and data type
+
+Internal Module Functions and Classes
+descriptions
+For functions:
+input:
+(data type) - description
+output:
+(data type) - description

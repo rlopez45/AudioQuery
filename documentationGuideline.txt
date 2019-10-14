@@ -4,10 +4,18 @@ description and data type
 Module output
 description and data type
 
-Internal Module Functions and Classes
-descriptions
+Internal Module Functions and Classes:
 For functions:
 input:
 (data type) - description
 output:
 (data type) - description
+(1) Audio Query to Textual Query Conversion Module:
+
+(2) Textual Query to SQL Query Conversion Module:
+The textual query will be converted to an SQL query based on the following hierarchical SQL query tree.
+Level 0 :                                               SELECT
+Level 1:                    COLUMNS                 CONDITIONS              OTHERS
+Level 2:    DISTINCT    AGGREGATE    AS-IS              WHERE           GROUPBY   ORDERBY   
+    eg. distinct(name)  sum(population)   name      SINGLE MULTIPLE
+The command from each level can each occur one or many times in the SQL query. For each query can have multiple WHERE conditions combined with AND and OR. A query can have one or more commands from each occur together. For example, each query will have COLUMNS that to be selected and may have CONDITIONS and GROUPBY or not. At each level, there are certain constraints. For example, on Level 1,the COLUMNS command is mandatory. Also, w.r.t Level 2, if a query has an AGGREGATION function, it should have a corresponding groupby. 

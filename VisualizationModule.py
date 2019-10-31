@@ -10,17 +10,35 @@ class VisualizationModule(object):
 	VM object
 
 
-	TODO: 1) Use input column number, column dtype to make judegement for potential chart type (might not be one-to-one relationship, may need better methods)
-#       potentially a decision trees with several trees
-#       2) make judgment on columns types and assign to right axis (should have decent generating rules) 
-#       3) take a look for reference on RawGraph and data2vis project 
+	TLearning Objects:
+
+	Step 1 (optional): select a subset of fields to focus on for creating data visualization: (rules like some of the columns cannot be together for visualizations)
+	Step 2: dectect subset's types (numeric, string, temporal, ordinal, categorical)
+	Step 3: based on chart type to decide select columns 
+	
+
 	'''
 
 	def __init__(self, data, ctype): 
-		self.source_df= data
+		self.data= data
 		self.ctype = ctype
 
 
+
+	def axis_from_data (df, ctype):
+		
+		# detect  dataframe columnes types and create list of the type.  
+		col_types  = df.columns.to_series().groupby(df.dtypes).groups
+   	 	c = {k.name: v for k, v in col_types.items()}
+    	type_list  = list(c.keys())
+
+    	if ctype == 'bar': 
+    		pass 
+
+    	if ctype == 'groupbar':
+    		pass
+
+    		
 	def chart_columns (ctype): 
 		if ctype == 'bar': 
 			tag = Query_SimpleBar (source_df)

@@ -1,4 +1,5 @@
 import sqlite3
+import pandas
 class DataModule(object):
     '''
     Instantiates a data module object
@@ -18,7 +19,8 @@ class DataModule(object):
     result - resultant dataframe
     '''
     def exeSQL(self, stringSQL):
-        pass
+        result = crsr.execute(stringSQL)
+        return result
 
     '''
     Creates a dictionary of data schema titles to new id numbers

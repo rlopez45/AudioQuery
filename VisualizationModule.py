@@ -80,17 +80,17 @@ class VisualizationModule(object):
 
     # TODO: Change the function and add axis rules
     def make_histogram(source_df):
-    col_list = list(source_df.columns)
-    if (len(col_list)!=2):
-        print('Only two columns are allowed for a simple histogram chart, please check.')
-    else:
-        print(col_list)
-        sns.set(style="whitegrid")
-        f, axes = plt.subplots(figsize = (18,7))
-        sns.distplot(x=col_list[1], y=col_list[0], data=source_df) 
+        col_list = list(source_df.columns)
+        if (len(col_list)!=2):
+            print('Only two columns are allowed for a simple histogram chart, please check.')
+        else:
+            print(col_list)
+            sns.set(style="whitegrid")
+            f, axes = plt.subplots(figsize = (18,7))
+            sns.distplot(x=col_list[1], y=col_list[0], data=source_df) 
 
     # TODO: further changes and rules
-	def make_grouped_bar(source_df):
+    def make_grouped_bar(source_df):
 		col_list = list(source_df.columns)
 		if (len(col_list)!=3):
 			print('Only three columns are allowed for Simple Bar Chart.')

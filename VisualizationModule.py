@@ -24,44 +24,73 @@ class VisualizationModule(object):
 		self.ctype = ctype
 
 
-
-	def axis_from_data (df, ctype):
+	def data_to_visualization(df, ctype):
 		
-		# detect  dataframe columnes types and create list of the type.  
+		# detect  dataframe columnes types and create list of the type. 
+		tag = 0 
 		col_types  = df.columns.to_series().groupby(df.dtypes).groups
    	 	c = {k.name: v for k, v in col_types.items()}
     	type_list  = list(c.keys())
+    	if ctype == 'bar':
+    		tag = make_bar(df)	
 
-    	if ctype == 'bar': 
-    		pass 
+    	if ctype == 'line':
+    		tag = make_line(df)
 
-    	if ctype == 'groupbar':
-    		pass
+    	if ctype == 'histogram':
+    		tag = make_histogram(df)
 
-    		
-	def chart_columns (ctype): 
-		if ctype == 'bar': 
-			tag = Query_SimpleBar (source_df)
+    	if ctype == 'hbar':
+    		tag = make_horizontal_bar(df)
 
-		if ctype == 'groupbar':
-			tag = Query_GroupedBar(source_df)
 
-		if tag == 1:
-			print ('Visulization Generated!')
+    # TODO: add axis dectecting rules
+    def make_bar(source_df):
+    	col_list = list(source_df.columns)
+    	if (len(col_list)!=2):
+        	print('Only two columns are allowed for Simple Bar Chart.')
+    	else:
+        	print(col_list)
+        	sns.set(style="whitegrid")
+        	f, axes = plt.subplots(figsize = (18,7))
+        	sns.barplot(x=col_list[0], y=col_list[1], data=source_df) 
 
-	def Query_SimpleBar(source_df):
-		col_list = list(source_df.columns)
-		if (len(col_list)!=2):
-			print('Only two columns are allowed for Simple Bar Chart.')
-			return 0
-		else:
-			print(col_list)
-			sns.set(style="whitegrid")
-			f, axes = plt.subplots(figsize = (18,7))
-			sns.barplot(x=col_list[1], y=col_list[0], data=source_df) 
-			return 1
 
-	def Query_GroupedBar(source_df):
+    # TODO:add axis rules
+    def make_horizontal_bar(source_df):
+    col_list = list(source_df.columns)
+    if (len(col_list)!=2):
+        print('Only two columns are allowed for simple bar chart, please check.')
+    else:
+        print(col_list)
+        sns.set(style="whitegrid")
+        f, axes = plt.subplots(figsize = (18,7))
+        sns.barplot(x=col_list[1], y=col_list[1], data=source_df) 
+
+    #TODO: add axis rules
+	def make_line(source_df):
+    	col_list = list(source_df.columns)
+    	if (len(col_list)!=2):
+        	print('Only two columns are allowed for Simple Bar Chart.')
+    	else:
+        	print(col_list)
+        	sns.set(style="whitegrid")
+        	f, axes = plt.subplots(figsize = (18,7))
+        	sns.lineplot(x=col_list[1], y=col_list[0], data=source_df) 
+
+    # TODO: Change the function and add axis rules
+    def make_histogram(source_df):
+    col_list = list(source_df.columns)
+    if (len(col_list)!=2):
+        print('Only two columns are allowed for a simple histogram chart, please check.')
+    else:
+        print(col_list)
+        sns.set(style="whitegrid")
+        f, axes = plt.subplots(figsize = (18,7))
+        sns.distplot(x=col_list[1], y=col_list[0], data=source_df) 
+
+    # TODO: further changes and rules
+	def make_grouped_bar(source_df):
 		col_list = list(source_df.columns)
 		if (len(col_list)!=3):
 			print('Only three columns are allowed for Simple Bar Chart.')

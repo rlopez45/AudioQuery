@@ -3,7 +3,7 @@ class VisualizationModule(object):
 	Instantiates a VisualizationModule
 
 	inputs: 
-	data:  pandas dataframe
+	data:  whole pandas dataframe 
 	ctype: request chart type
 
 	returns:
@@ -15,8 +15,11 @@ class VisualizationModule(object):
 		self.data= data
 		self.ctype = ctype
 
+    # TODO: based on whole dataset, make suggesstions for potential chart types based on rules. 
+    def visualization_suggestion (data):
+        pass
 
-	def data_to_visualization(df, ctype):
+	def data_to_visualization(source_df, ctype):
 		
 		# detect  dataframe columnes types and create list of the type. 
 		tag = 0 
@@ -24,16 +27,16 @@ class VisualizationModule(object):
    	 	c = {k.name: v for k, v in col_types.items()}
     	type_list  = list(c.keys())
     	if ctype == 'bar':
-    		tag = make_bar(df)	
+    		tag = make_bar(source_df)	
 
     	if ctype == 'line':
-    		tag = make_line(df)
+    		tag = make_line(source_df)
 
     	if ctype == 'histogram':
-    		tag = make_histogram(df)
+    		tag = make_histogram(source_df)
 
     	if ctype == 'hbar':
-    		tag = make_horizontal_bar(df)
+    		tag = make_horizontal_bar(source_df)
 
    
     def make_bar(source_df):
@@ -116,13 +119,4 @@ class VisualizationModule(object):
 
     # TODO: not finishied, further changes and rules
 	def make_grouped_bar(source_df):
-		col_list = list(source_df.columns)
-		if (len(col_list)!=3):
-			print('Only three columns are allowed for Simple Bar Chart.')
-			return 0
-		else:
-			print(col_list)
-			sns.set(style="whitegrid")
-			f, axes = plt.subplots(figsize = (18,7))
-			sns.barplot(y=col_list[2], hue=col_list[1], x=col_list[0], data=source_df)
-			return 1
+		pass

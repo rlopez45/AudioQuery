@@ -1,6 +1,8 @@
 import nltk
 import gensim
 from nltk.corpus import stopwords as sWords
+import pandas as pd
+import time
 class SimilarityModule(object):
     modelFilename = 'GoogleNews-vectors-negative300.bin'
     stopwords = set(sWords.words('english'))
@@ -11,8 +13,8 @@ class SimilarityModule(object):
     returns:
     SM object
     '''
-    def __init__(self,dataObj):
-        self.dataObj = dataObj
+    def __init__(self,columns):
+        self.columns = columns
         self.mlModel = gensim.models.KeyedVectors.load_word2vec_format(\
             SimilarityModule.modelFilename, binary=True)
     '''
@@ -26,6 +28,7 @@ class SimilarityModule(object):
     def tokenize(self, string):
         s = string.lower()
         tokens = nltk.word_tokenize(s)
+        tokens = [token for token in tokens if token not in SimilarityModule.stopwords]
         print(tokens)
         final = nltk.pos_tag(tokens)
         return final
@@ -48,13 +51,21 @@ class SimilarityModule(object):
     ids - list of ids - id maps to a SQL Command
     '''
     def SQLSuggestions(self,string):
+        tokens = self.tokenize(string)
+        nouns = [token for token in tokens if 'N']
         pass
 
 if __name__ == "__main__":
-    ob = SimilarityModule(None)
+    start = time.time()
+    df = pd.read_csv("data\cand_summary.txt", delimiter = "|")
+    columns = df.columns.copy()
+    ob = SimilarityModule(columns)
+    end = time.time()
+    print(end-start)
     #design test for similarity for the first column and first transformation
     #Give me the total amount of receipts
     inputAudio = 'Give me the total amount of receipts'
+    
     tokens = ob.tokenize(inputAudio)
     print(tokens)
     

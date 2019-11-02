@@ -1,3 +1,10 @@
+import pandas as pd
+import altair as alt
+import seaborn as sns
+import matplotlib.pyplot as plt
+import warnings
+
+
 class VisualizationModule(object):
 	'''
 	Instantiates a VisualizationModule
@@ -16,10 +23,41 @@ class VisualizationModule(object):
 		self.ctype = ctype
 
     # TODO: based on whole dataset, make suggesstions for potential chart types based on rules. 
-    def visualization_suggestion (data):
-        pass
+    def visualization_suggestion(df):
+    
+        # create a chart possible dictionary
+        potential_chart_list = []
+        chart_dict = {'bar': 0, 'horizontal bar': 0, 'line': 0, 'histogram':0}
+    
+        types_grouped  = df.columns.to_series().groupby(df.dtypes).groups
+        type_dict ={k.name: v for k, v in types_grouped.items()}
+        
+        # TODO: need to check all different data type for numerical, category data
+        # TODO: Adding more chart type detection suggestion
+        if ( ('int64' in type_dict) |('float64' in type_dict)) :
+            chart_dict['histogram'] = 1
+        
+            # TODO: need to add method for detect datatime type for simple line chart
+            if (('object' in type_dict)) :
+                chart_dict['bar'] = 1
+                chart_dict['horizontal bar'] = 1    
+        
+        # Adding possible chart types into output list
+        for chart, flag in chart_dict.items():  
+            if (flag == 1):
+                potential_chart_list.append(chart)
+    
+        # Print out chart suggestions
+        if (len(potential_chart_list) != 0):
+            print ("\nThe potential chart types for this dataset will be: {}".format(potential_chart_list))
+            return 1
+    
+        else: 
+            print ("\nThere is no available chart type for this dataset.")
+            return 0
 
-	def data_to_visualization(source_df, ctype):
+	
+    def dataset_to_visualization(source_df, ctype):
 		
 		# detect  dataframe columnes types and create list of the type. 
 		tag = 0 

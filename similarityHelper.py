@@ -1,11 +1,10 @@
-
 def findForEach(list_tokens):
     for i in range(len(list_tokens)-1):
         curr = list_tokens[i][0]
         next = list_tokens[i+1][0]
         if curr == 'for' and next =='each':
             if i+2<len(list_tokens):
-                return list_tokens[i-2]
+                return list_tokens[i+2]
     return None
 def getNouns(list_tokens):
     nouns = []

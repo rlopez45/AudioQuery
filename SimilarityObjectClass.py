@@ -51,3 +51,4 @@ class SimilarityObject(object):
 
 if __name__ == "__main__":
     smObject = SimilarityObject(['booty', 'boot'])
+    print(smObject.d)

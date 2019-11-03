@@ -1,6 +1,7 @@
 import pandas as pd
 import seaborn as sns
 import warnings
+import matplotlib.pyplot as plt
 
 '''
     Instantiates a VisualizationModule
@@ -20,71 +21,78 @@ class VisualizationModule(object):
     def __init__(self, df):
         
         self.df= df
-		
+        self.type_dict = dict()
+        self.col_lists = list(self.df.columns)
     
-    def visualization_suggestion(df):
+    def visualization_suggestion(self):
         potential_chart_list = []
         chart_dict = {'bar': 0, 'horizontal bar': 0, 'line': 0, 'histogram': 0, 'scatter' : 0}
-        types_grouped  = df.columns.to_series().groupby(df.dtypes).groups
-        type_dict ={k.name: v for k, v in types_grouped.items()}
+        types_grouped  = self.df.columns.to_series().groupby(self.df.dtypes).groups
+        self.type_dict ={k.name: v for k, v in types_grouped.items()}
         
-        # TODO: need to check all different data type for numerical, category data
+        
         # TODO: Add more chart type detection suggestion
-        # TODO: Add scatter plot detection suggestion
-        # TODO: Add line plot detection suggestion
+        # TODO: need to add smart methods for detect datatime type for simple line chart
+        if ( ('datetime64[ns]' in self.type_dict) |('datetime64[ms]' in self.type_dict) | ('datetime64[D]' in self.type_dict)) :
+            chart_dict['line'] = 1
 
-        if ( ('int64' in type_dict) |('float64' in type_dict)) :
-            chart_dict['histogram'] = 1
+        if ( ('int64' in self.type_dict) |('float64' in self.type_dict)) :
+            
+            if(len(self.col_lists)==1):
+                chart_dict['histogram'] = 1
         
-            # TODO: need to add smart methods for detect datatime type for simple line chart
-            if (('object' in type_dict)) :
+            
+            if (('object' in self.type_dict)) :
                 chart_dict['bar'] = 1
                 chart_dict['horizontal bar'] = 1    
         
-        # Adding possible chart types into output list
         for chart, flag in chart_dict.items():  
             if (flag == 1):
                 potential_chart_list.append(chart)
     
         # Print out chart suggestions
         if (len(potential_chart_list) != 0):
-            print ("\nThe potential chart types for this dataset will be: {}".format(potential_chart_list))
+            print (">>> The potential chart types for this dataset could be:\n\n{}".format(potential_chart_list))
             return 1
     
         else: 
-            print ("\nThere is no available chart type for this dataset.")
+            print (">>> There is no available chart type for this dataset.")
             return 0
 
 	
-    def dataset_to_visualization(source_df, ctype):
+    def dataset_to_visualization(self, ctype):
 		
-		# detect  dataframe columnes types and create list of the type. 
+		
         tag = 0 
-        col_types  = df.columns.to_series().groupby(df.dtypes).groups
+        col_types  = self.df.columns.to_series().groupby(self.df.dtypes).groups
         c = {k.name: v for k, v in col_types.items()}
         type_list  = list(c.keys())
         if ctype == 'bar':
-            tag = make_bar(source_df)	
+            tag = self.make_bar()	
         
         if ctype == 'line':
-            tag = make_line(source_df)
+            tag = self.make_line()
 
         if ctype == 'histogram':
-            tag = make_histogram(source_df)
+            tag = self.make_histogram()
 
         if ctype == 'horizontal bar':
-            tag = make_horizontal_bar(source_df)
+            tag = self.make_horizontal_bar()
 
-        return tag
+        if tag == 1: 
+            print("\n>>> visualization Generating Succeed!")
+        if tag == 0:
+            print("\n>>> visulization Generating failed :(")
 
-    def make_bar(source_df):
-        col_lists = list(source_df.columns)
-        col_types = source_df.dtypes
+    def make_bar(self):
+        
+        col_types = self.df.dtypes
         x_axis = ''
         y_axis = ''
 
-        if (len(col_lists)!=2):
-            print('Only two columns are allowed for simple bar chart, please check.')
+        if (len(self.col_lists)!=2):
+            print('>>> Only two columns are allowed for simple bar chart, please check :)')
+            return 0
         else:
 
             for t in col_types: 
@@ -93,19 +101,22 @@ class VisualizationModule(object):
                 if t in ['int64','float64']:
                     y_axis = col_types[col_types==t].index[0]
                 
-        print("Columns for simple bar chart are: {}".format(col_lists))
-        sns.set(style="whitegrid")
-        f, axes = plt.subplots(figsize = (18,7))
-        sns.barplot(x=x_axis, y=y_axis, data=source_df) 
+            print("\nColumns for simple bar chart are: {}".format(self.col_lists))
+            sns.set(style="whitegrid")
+            f, axes = plt.subplots(figsize = (18,7))
+            sns.barplot(x=x_axis, y=y_axis, data=self.df) 
+            plt.show(block=True)
+            plt.savefig('bar_test.png')
+            return 1
 
     
-    def make_horizontal_bar(source_df):
-        col_lists = list(source_df.columns)
-        col_types = source_df.dtypes
+    def make_horizontal_bar(self):
+        
+        col_types = self.df.dtypes
         x_axis = ''
         y_axis = ''
-        if (len(col_lists)!=2):
-            print('Only two columns are allowed for simple bar chart, please check.')
+        if (len(self.col_lists)!=2):
+            print('>>> Only two columns are allowed for simple bar chart, please check :)')
         else: 
             for t in col_types: 
                 if t in ['object']:
@@ -113,53 +124,66 @@ class VisualizationModule(object):
                 if t in ['int64','float64']:
                     x_axis = col_types[col_types==t].index[0]
                 
-        print("Columns for horizontal bar chart are: {}".format(col_lists))
-        sns.set(style="whitegrid")
-        f, axes = plt.subplots(figsize = (18,7))
-        sns.barplot(x=x_axis, y=y_axis, data=source_df) 
+            print("\nColumns for horizontal bar chart are: {}".format(self.col_lists))
+            sns.set(style="whitegrid")
+            f, axes = plt.subplots(figsize = (18,7))
+            sns.barplot(x=x_axis, y=y_axis, data=self.df)
 
+            plt.savefig('horizontal_bar_test.png')
+            return 1 
 
+    # TODO: fix the bug here
     # TODO: Adjust xaxis range
-    def make_line(source_df):
-        col_lists = list(source_df.columns)
-        col_types = source_df.dtypes
+    def make_line(self):
+        #
+        col_types = self.df.dtypes
         x_axis = ''
         y_axis = ''
-        if (len(col_lists)!=2):
-            print('Only two columns are allowed for simple line chart, please check.')
+        if (len(self.col_lists)!=2):
+            print('\n>>> Only two columns are allowed for simple line chart, please check :)')
+            return 0
         else: 
             for t in col_types: 
+                
                 if t in ['datetime64[ns]','datetime64[D]', 'datetime64[ms]']:
                     x_axis = col_types[col_types==t].index[0]
                 if t in ['int64','float64']:
                     y_axis = col_types[col_types==t].index[0]
                 
-        print("Columns for simple line chart are: {}".format(col_lists))
-        sns.set(style="whitegrid")
-        f, axes = plt.subplots(figsize = (18,7))
-        sns.lineplot(x=x_axis, y=y_axis, data=source_df) 
+            print("\nColumns for simple line chart are: {}".format(self.col_lists))
+            sns.set(style="whitegrid")
+            #f, axes = plt.subplots(figsize = (18,7))
+            sns.lineplot(x=x_axis, y=y_axis, data=self.df) 
+            plt.savefig('line_test.png')
 
+            return 1
     
    
-    def make_histogram(source_df):
-        col_lists = list(source_df.columns)
-        col_types = source_df.dtypes
+    def make_histogram(self):
         
-        if (len(col_lists)>1):
-            print('Only one numerical column is allowed for simple histogram chart, please check.')
+        col_types = self.df.dtypes
+        
+        if (len(self.col_lists)!=1):
+            print('>>> Only one numerical column is allowed for simple histogram chart, please check :)')
+            return 0
+        
         else: 
-            print("Columns for simple hi chart are: {}".format(col_lists))
+            
+            print(">>>\nColumns for simple histogram chart are: {}".format(self.col_lists))
             sns.set(style="whitegrid")
             f, axes = plt.subplots(figsize = (18,7))
-            sns.distplot(source_df) 
+            sns.distplot(self.df) 
+            plt.savefig('histogram_test.png')
+            return 1
 
-    def make_scatter(source_df):
-        col_lists = list(source_df.columns)
-        col_types = source_df.dtypes
+    def make_scatter(self):
+        
+        col_types = self.df.dtypes
         x_axis = ''
         y_axis = ''
         if (len(col_lists)!=2):
-            print('Only two columns numerical are allowed for simple scatter plot, please check.')
+            print('>>>Only two columns numerical are allowed for simple scatter plot, please check :)')
+            return 0
         else: 
             c = 0
             for t in col_types: 
@@ -169,25 +193,42 @@ class VisualizationModule(object):
                 x_axis = col_lists[0]
                 y_axis = col_lists[1]
                 
-        print("Columns for simple scatter plot are: {}".format(col_lists))
-        sns.set(style="whitegrid")
-        sns.relplot(x=x_axis, y=y_axis, data=source_df); 
+            print(">>>\nColumns for simple scatter plot are: {}".format(self.col_lists))
+            sns.set(style="whitegrid")
+            sns.relplot(x=x_axis, y=y_axis, data=self.df); 
 
 
     # TODO: finish the model
-    def make_grouped_bar(source_df):
+    def make_grouped_bar(self):
         pass
 
-    # TODO: finish the model
-    def scatter_bar(source_df):
-        pass
 
 # finished the initiated functions.
 if __name__ == "__main__":
 
     # design test
-    dist_pop = pd.read_csv("dist_pop.txt", delimiter="|")
+    dist_pop = pd.read_csv("data/dist_pop.txt", delimiter="|")
+    candidates = pd.read_csv("data/candidate.txt", delimiter="|")
+    cand_summary = pd.read_csv("data/cand_summary.txt", delimiter="|")
+    
     bar_test_df = dist_pop[['state','population']].groupby('state').sum().reset_index()
+    line_test_df = candidates.merge(cand_summary, on='CAND_ID', how='left')[['CAND_ELECTION_YR','TTL_RECEIPTS']].groupby('CAND_ELECTION_YR').sum().reset_index()
+    line_test_df['CAND_ELECTION_YR'] =  pd.to_datetime(line_test_df['CAND_ELECTION_YR'])
+    hist_test_df = bar_test_df[['population']]
+    scatter_test_df = cand_summary[['TTL_RECEIPTS','TTL_DISB']]
 
-    vmObject = VisualizationModule()
-    visualization_suggestion(bar_test_df)
+    #module start here
+    vm = VisualizationModule(hist_test_df)
+    vm.visualization_suggestion()
+    type_input = input("\n>>> Which chart visualization you want?")
+
+    print("\n>>> Your current input are: {}".format(type_input))
+    
+    # Add similarity module later to mapping the input to types of charts
+    chart_type = type_input
+    print('\n>>> Your choice chart is: {}'.format(chart_type))
+    print(">>> Generating initial visualization >>>")
+
+    vm.dataset_to_visualization(chart_type)
+    #vmObject.make_bar(bar_test_df)
+

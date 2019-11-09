@@ -6,7 +6,7 @@ def findForEach(list_tokens):
         next = list_tokens[i+1][0]
         if curr == 'for' and next =='each':
             if i+2<len(list_tokens):
-                return list_tokens[i-2]
+                return list_tokens[i+2]
     return None
 
 #  Extract noun token from a list of tokens

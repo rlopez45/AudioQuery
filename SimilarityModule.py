@@ -17,10 +17,11 @@ class SimilarityModule(object):
     returns:
     SM object
     '''
-    def __init__(self,columns):
+    def __init__(self,columns,databaseName):
         self.columns = SimilarityObject(columns)
         sqlTokens = parseSQL(SimilarityModule.sqlFilename)
-        #self.SQLCommands = SimilarityObject(sqlTokens)
+        self.SQLCommands = SimilarityObject(sqlTokens)
+        self.databaseName = databaseName
         self.mlModel = wordnet
             
     '''
@@ -35,7 +36,7 @@ class SimilarityModule(object):
         s = string.lower()
         tokens = nltk.word_tokenize(s)
         #remove stop words
-        if stop_words:
+        if not stop_words:
             tokens = [token for token in tokens if token not in SimilarityModule.stopwords]
         final = nltk.pos_tag(tokens)
         return final
@@ -50,6 +51,8 @@ class SimilarityModule(object):
     result most similar iterable in d as compared to its value synonyms
     '''
     def mostSimilar(self, d, string):
+        if string == None:
+            return None
         #heuristic check for exact match
         if string in d:
             return string
@@ -57,9 +60,7 @@ class SimilarityModule(object):
         bestScore = None
         best = None
         for string in d:
-            print(string)
             synVals = d[string]
-            print(synVals)
             similarityScores = set((syn1.wup_similarity(syn2) for syn1 in syns for syn2 in synVals))
             if None in similarityScores:
                 similarityScores.remove(None)
@@ -73,8 +74,8 @@ class SimilarityModule(object):
                 if bestScore<similarityScore:
                     bestScore = similarityScore
                     best = string
-        print(bestScore)
         if bestScore == None:
+            print('there were no tokens in input dictionary that can be found in wordnet')
             return None
         if bestScore<.5:
             return None
@@ -91,24 +92,66 @@ class SimilarityModule(object):
         full_tokens = self.tokenize(string,True)
         no_stop = self.tokenize(string, False)
         nouns = getNouns(no_stop)
-        print(nouns)
+        group_by_noun = findForEach(full_tokens)
+        group_by_col = None
+        if group_by_noun!=None:
+            group_by_col = self.mostSimilar(self.columns, group_by_noun[0])
+        nouns_no_repeats = []
+        noun_set = set()
+        for noun in nouns:
+            if noun_set not in noun_set:
+                nouns_no_repeats.append(noun)
+                noun_set.add(noun)
+        nouns = nouns_no_repeats
+        if group_by_noun in nouns:
+            nouns.remove(group_by_noun)
+        #process sql commands
+        sqlCommands = set()
+        sqlNouns = set()
+        for tuple in nouns:
+            noun,x = tuple
+            command = self.mostSimilar(self.SQLCommands, noun)
+            if command in sqlCommands:
+                continue
+            if len(sqlCommands)<2:
+                sqlCommands.add(command)
+                sqlNouns.add(noun)
+            else:
+                break
+        #process columns
+        cols = set()
+        for tuple in nouns:
+            noun, x = tuple
+            if noun in sqlNouns:
+                continue
+            col = self.mostSimilar(self.columns, noun)
+            r = str(noun) + str(col)
+            cols.add(col)
         sqlString = 'SELECT '
         columnString = ''
-        dataFrameString = ''
-        #columnString = sqlCommandTransform(columnString, tokens)
+        if len(cols)>1:
+            columnString = ','.join(cols)
+        else:
+            col = list(cols)[0]
+            columnString = col
+        dataFrameString = "FROM " + self.databaseName
         group_by = ''
-        return sqlString + columnString+ dataFrameString + group_by 
+        if group_by_noun !=None:
+            group_by = 'GROUP_BY {}'.format(group_by_col)
+        return sqlString + columnString+ " " + dataFrameString +" " +  group_by 
         
 
 if __name__ == "__main__":
     start = time.time()
+    dataFrameName = 'data'
     df = pd.read_csv("data\cand_summary.txt", delimiter = "|")
     columns = list(df.columns)
-    ob = SimilarityModule(columns)
+    ob = SimilarityModule(columns, dataFrameName)
     end = time.time()
     print(end-start)
     result = ob.mostSimilar(ob.columns, 'receipts')
-    inputString = 'give me the total receipts for each year'
+    inputString = 'give me the total receipts for each affiliation'
     sqlS = ob.SQLSuggestion(inputString)
+    print(sqlS)
     
     

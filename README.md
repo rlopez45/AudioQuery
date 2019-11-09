@@ -18,7 +18,9 @@ SpeechToText examples: https://github.com/Uberi/speech_recognition/blob/master/e
 ### Similarity Module
 
 1. Install NLTK
-2. Download the 'stopwords' and 'wordnet' packages from nltk.
+2. Download the 'stopwords', 'wordnet', 'punkt' packages from nltk.
     e.g. nltk.download('stopwords')
+3. nltk.download('punkt') is needed for nltk.word_tokenize()
+4. nltk.download('averaged_perceptron_tagger') also needed
 
 

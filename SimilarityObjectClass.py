@@ -5,12 +5,12 @@ class SimilarityObject(object):
     [helper method don't call directly]
     Splits a string on a string of delimiters
     input:
-    delimiters -string each char is a delimiter
-    list_of strings- [(str), (str)...]
+    delimiters - string where each char is a delimiter
+    list_of strings - [(str), (str)...]
     returns:
-    dictionary - tokens- keys , split tokens on delimiters - vals
+    dictionary - tokens - keys , split tokens on delimiters - vals
     '''
-    def splitList(self,list_of_strings, delimiters = '_|,\/.?()'):
+    def splitList(self, list_of_strings, delimiters = '_|,\/.?()'):
         d = {}
         for string in list_of_strings:
             split = re.split(delimiters, string.lower())
@@ -46,9 +46,11 @@ class SimilarityObject(object):
     def __getitem__(self, key):
         return self.d[key]
     def __init__(self, list_of_tokens):
+        # print("Inputs: ", list_of_tokens)
         delimiter_d = self.splitList(list_of_tokens)
+        # print("List of strings after removing delimiters: ", delimiter_d)
         self.d = self.getSynonyms(delimiter_d)
 
 if __name__ == "__main__":
     smObject = SimilarityObject(['booty', 'boot'])
-    print(smObject.d)
+    print("Synonyms for input terms: ", smObject.d)

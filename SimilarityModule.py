@@ -41,7 +41,7 @@ class SimilarityModule(object):
         final = nltk.pos_tag(tokens)
         return final
     
-    
+
     '''
     returns the most similar word from a dictionary in the form of {word: set(word's synsets)}
     input:
@@ -89,23 +89,29 @@ class SimilarityModule(object):
     ids - list of ids - id maps to a SQL Command
     '''
     def SQLSuggestion(self,string):
-        full_tokens = self.tokenize(string,True)
-        no_stop = self.tokenize(string, False)
+        # Tokenize
+        full_tokens = self.tokenize(string,True) # with stopwords
+        no_stop = self.tokenize(string, False)   # without stopwords
         nouns = getNouns(no_stop)
         group_by_noun = findForEach(full_tokens)
+
+        # Find group by column
         group_by_col = None
         if group_by_noun!=None:
             group_by_col = self.mostSimilar(self.columns, group_by_noun[0])
+
+        #  removing repititions
         nouns_no_repeats = []
         noun_set = set()
         for noun in nouns:
-            if noun_set not in noun_set:
+            if noun not in noun_set:
                 nouns_no_repeats.append(noun)
                 noun_set.add(noun)
         nouns = nouns_no_repeats
         if group_by_noun in nouns:
             nouns.remove(group_by_noun)
-        #process sql commands
+
+        #  process sql commands
         sqlCommands = set()
         sqlNouns = set()
         for tuple in nouns:
@@ -118,7 +124,8 @@ class SimilarityModule(object):
                 sqlNouns.add(noun)
             else:
                 break
-        #process columns
+
+        #  process columns
         cols = set()
         for tuple in nouns:
             noun, x = tuple
@@ -127,12 +134,24 @@ class SimilarityModule(object):
             col = self.mostSimilar(self.columns, noun)
             r = str(noun) + str(col)
             cols.add(col)
+
+        # Associate columns with aggregation functions
+        # For now assuming the same aggregation function for all columns
+        cols_with_agg = set()
+        if( len(sqlCommands) > 0 ):
+            for col in cols:
+                col_with_agg = list(sqlCommands)[0] + '( ' + col + ' )'
+                cols_with_agg.add( col_with_agg )    
+        else:
+            cols_with_agg = cols
+        
+        # Construct sql string
         sqlString = 'SELECT '
         columnString = ''
-        if len(cols)>1:
+        if len(cols_with_agg)>1:
             columnString = ','.join(cols)
         else:
-            col = list(cols)[0]
+            col = list(cols_with_agg)[0]
             columnString = col
         dataFrameString = "FROM " + self.databaseName
         group_by = ''
@@ -149,9 +168,9 @@ if __name__ == "__main__":
     ob = SimilarityModule(columns, dataFrameName)
     end = time.time()
     print(end-start)
+    # test for mostSimilar
     result = ob.mostSimilar(ob.columns, 'receipts')
+    # end: test for mostSimilar
     inputString = 'give me the total receipts for each affiliation'
     sqlS = ob.SQLSuggestion(inputString)
     print(sqlS)
-    
-    

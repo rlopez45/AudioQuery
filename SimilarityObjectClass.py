@@ -46,11 +46,8 @@ class SimilarityObject(object):
     def __getitem__(self, key):
         return self.d[key]
     def __init__(self, list_of_tokens):
-        # print("Inputs: ", list_of_tokens)
         delimiter_d = self.splitList(list_of_tokens)
-        # print("List of strings after removing delimiters: ", delimiter_d)
         self.d = self.getSynonyms(delimiter_d)
 
 if __name__ == "__main__":
     smObject = SimilarityObject(['booty', 'boot'])
-    print("Synonyms for input terms: ", smObject.d)

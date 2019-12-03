@@ -24,3 +24,15 @@ SpeechToText examples: https://github.com/Uberi/speech_recognition/blob/master/e
 4. nltk.download('averaged_perceptron_tagger') also needed
 
 
+## Examples
+### Unstructured input examples:
+1. give me the total receipts for each affiliation
+2. give me candidate counts by candidate id
+
+
+## Testing
+### List of Queries Tested:
+give me the total receipts for each affiliation
+give me the average of receipts by affiliation
+
+

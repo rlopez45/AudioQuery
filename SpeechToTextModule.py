@@ -1,5 +1,6 @@
 import speech_recognition as sr 
 import time
+from os import path
 
 class SpeechToTextModule():
     
@@ -33,10 +34,17 @@ class SpeechToTextModule():
         except sr.RequestError as e:
             print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
+    # given an audio file location, loads it
+    def loadAudioFile( self, audioFileLocation ):
+        AUDIO_FILE = path.join(path.dirname(path.realpath(__file__)), audioFileLocation )
+        print('Audio File Absolute Location: ', AUDIO_FILE)
+        return AUDIO_FILE
+
 if __name__ == "__main__":
     print('\nSay Something, Microphone is recording...')
-    start = time.time()
     stt   = SpeechToTextModule()
-    text  = stt.convertSpeechToText()
+    AUDIO_FILE = stt.loadAudioFile( "audio\Sample_Audio_1.wav" )
+    start = time.time()
+    text  = stt.convertSpeechToText( AUDIO_FILE )
     end   = time.time() 
     print("Time Taken(s): ", end-start)

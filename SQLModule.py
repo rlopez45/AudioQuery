@@ -1,11 +1,13 @@
 import errorChecker as ec
 import dbHelper as dbh
 import pandas as pd
+from  similarityHelper import *
 
 class SQLModule(object):
 
     # Instantiates a SQLModule object
-    def __init__(self, 
+    def __init__(
+        self, 
         selectColumns = [], 
         aggregationColumns = [], 
         aggregationCommandToColumnMap = [],
@@ -16,7 +18,7 @@ class SQLModule(object):
         groupbyColumns = [],
         orderbyColumns = [],
         orderbyColumnToAscDescMap = {}
-    ):
+    ): 
         # self.map = None # To Do: open the serialized pickled dictionary
         self.selectColumns = selectColumns
         self.aggregationColumns = aggregationColumns
@@ -124,8 +126,7 @@ class SQLModule(object):
         return orderByPhrase
 
 if __name__ == "__main__":
-    
-    df = pd.read_csv("data\cand_summary.txt", delimiter = "|")
+    df = readDf("data\cand_summary.txt", delimiter = "|")
     dbHelper = dbh.dbHelper( df )
     print( '\nSize: ', dbHelper.getDfSize() )
     print( '\nColumns: ', dbHelper.getColumnNames() )
@@ -139,7 +140,7 @@ if __name__ == "__main__":
         'whereColumnNames': {'other_pol_cmte_contrib', 'cand_id'}, 
         'whereColumnNameToValueMap': {'other_pol_cmte_contrib': [], 'cand_id': ['h0ak00055']}, 
         'whereColumnNameToConditionMap': {'other_pol_cmte_contrib': [], 'cand_id': ['=']}, 
-        'groupbyColumns': None, 
+        'groupbyColumns': [], 
         'orderbyColumns': [], 
         'orderbyColumnToAscDescMap': {}}
     sm = SQLModule( sqlObj[ 'selectColumns' ], sqlObj[ 'aggregationColumns' ], sqlObj[ 'aggregationCommandToColumnMap' ],

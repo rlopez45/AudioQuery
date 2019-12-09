@@ -2,23 +2,31 @@ import speech_recognition as sr
 import time
 
 class SpeechToTextModule():
-    '''
-    Converts an audio input into text using the Google Speech to Text API
-    input:
-    Audio as spoken into the microphone
-    returns:
-    The text (converted from audio)
-    '''   
-    def convertSpeechToText( self ):
-        r = sr.Recognizer()
-        with sr.Microphone() as source:
-            print("SAY SOMETHING: ")
-            # listen for the first phrase and extract it into audio data
-            audio = r.listen(source)
-            print("TIME OVER THANKS")
+    
+    # Converts an audio input into text using the Google Speech to Text API
+    # Input:
+    # Audio as spoken into the microphone
+    # Output:
+    # The text (converted from audio)
+    def __init__( self ):
+        print('\nInitializing Speech Recognizer...')
+        self.r = sr.Recognizer()
+        print('Speech Recognizer initialized!')
+
+    # Listens to the first phrase and extracts it into audio data
+    # audioInput: .wav file, uses microphone input if audio file is not given
+    def convertSpeechToText( self, audioFile = None):
+        if audioFile:
+            audioSource = sr.AudioFile(audioFile)
+        else:
+            audioSource = sr.Microphone()
+
+        with audioSource as source:
+            audio = self.r.listen(source)
+            print("Time Over, Thanks")
         try:
-            text = r.recognize_google(audio)
-            print("TEXT: ", text)
+            text = self.r.recognize_google(audio)
+            print("Converted Text: ", text)
             return text
         except sr.UnknownValueError:
             print("Google Speech Recognition could not understand audio")
@@ -26,6 +34,7 @@ class SpeechToTextModule():
             print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 if __name__ == "__main__":
+    print('\nSay Something, Microphone is recording...')
     start = time.time()
     stt   = SpeechToTextModule()
     text  = stt.convertSpeechToText()

@@ -36,27 +36,20 @@ class SimilarityObject(object):
     transformed_d : Dictionary with key = string and val = set of synonyms
     '''
     def getSynonyms(self, d):
-        # print("d: ", d)
         transformed_d = {}
         for string in d:
             new = set()
             split = d[string]
             for s in split:
-                # print("\n For word: ", s)
                 syns = wordnet.synsets(s)
-                # print("\n Synonyms: ", syns)
-                # print("\n Lemmas: ")
                 for syn in syns:
-                    # print("\n")
-                    # print("syn: ", syn)
-                    # print("definition:", syn.definition())
                     lemmas = [lemma.name() for lemma in syn.lemmas()]
-                    # print(lemmas)
-                # print("\n")
                 new.update(syns)
             transformed_d[string] = new
         return transformed_d
 
+    # Helper Method (dont call directly):
+    # Given a list of synonyms, excludes certain synonyms from the list 
     def excludeSynonyms( self, synsList, synsToExcludeList ):
         if( synsToExcludeList == [] or synsToExcludeList == None ):
             return synsList
@@ -66,39 +59,46 @@ class SimilarityObject(object):
                 synsListResult.append( syn )
         return synsListResult
 
+    # Find synonyms for sql keywords
     def getSQLKeywordSynonyms(self, sqlKeywordsDict):
-        print("sqlKeywordsDict: ", sqlKeywordsDict)
         transformed_d = {}
+        # Synonyms to exclude for an SQL command if a long list of synonyms are present
         synsToExclude = {
             'sum':    [ wordnet.synset('sum.n.01'), wordnet.synset('kernel.n.03'), wordnet.synset('summarize.v.02') ],
             'sort':   [ wordnet.synset('kind.n.01'), wordnet.synset('sort.n.02'), wordnet.synset('sort.n.03'), wordnet.synset('screen.v.03') ],
             'median': [ wordnet.synset('medial.s.01') ],
-            'count':  [ wordnet.synset('count.n.02'), wordnet.synset('count.n.03'), wordnet.synset('count.v.02'), wordnet.synset('consider.v.04'), wordnet.synset('count.v.08'), wordnet.synset('reckon.v.06') ]
+            'count':  [ wordnet.synset('count.n.02'), wordnet.synset('count.n.03'), wordnet.synset('count.v.02'), wordnet.synset('consider.v.04'), wordnet.synset('count.v.08'), wordnet.synset('reckon.v.06') ],
+        }
+        # Custom synonym list to include specified for SQL commands
+        synsToInclude = {
+            'min'   : [ wordnet.synset('minimum.a.01'), wordnet.synset('minimum.n.01') ],
+            'max'   : [ wordnet.synset('maximum.a.01'), wordnet.synset('maximum.n.01'), wordnet.synset('maximum.n.02'),  wordnet.synset('utmost.n.01'), wordnet.synset('maximal.a.01') ]
         }
         for sqlKeyword in sqlKeywordsDict:
             new = set()
             splitSet = sqlKeywordsDict[ sqlKeyword ]
             for s in splitSet:
-                # print("\n For word: ", s)
-                syns = wordnet.synsets(s)
-                # Doing the below to avoid situations where column names match with sql keywords
+                if ( len( synsToInclude.get( s, [] )) ):
+                    syns = synsToInclude[ s ]
+                else:
+                    syns = wordnet.synsets(s)
+                # NOTE: Doing the below to avoid situations where column names match with sql keywords
                 # owing to an unintended meaning of the sql keyword. For e.g. the keyword 'receipts' matches with
                 # term wordnet.synset('sum.n.01') with a > 0.9 similarity score, where wordnet.synset('sum.n.01')
                 # mean 'a quantity of money'. However for finding synonyms for the SQL keyword SUM, we dont need 
                 # to consider certain meanings of sum (in this case, we dont need to consider wordnet.synset('sum.n.01')).
                 syns = self.excludeSynonyms( syns, synsToExclude.get(s, []) ) 
-                # print("\n Synonyms: ", syns)
-                for syn in syns:
-                    self.getSynonymInfo( syn )                    
+                # for syn in syns:
+                #     self.getSynonymInfo( syn )                    
                 new.update(syns)
             transformed_d[ sqlKeyword ] = new
         return transformed_d
 
     def getSynonymInfo(self, syn):
         lemmas = [lemma.name() for lemma in syn.lemmas()]
-        # print("Synonym: ", syn)
-        # print("Synonym Definition: ", syn.definition())
-        # print("Associated Lemmas: ", lemmas)
+        print("Synonym: ", syn)
+        print("Synonym Definition: ", syn.definition())
+        print("Associated Lemmas: ", lemmas)
 
     def __contains__(self, key):
         return key in self.d
@@ -125,14 +125,20 @@ class SimilarityObject(object):
                 else:
                     list_of_tokens_tmp.append(i)
         list_of_tokens = list_of_tokens_tmp
-        delimiter_d     = self.splitList(list_of_tokens)
+        delimiter_d = self.splitList(list_of_tokens)
         if( token_type == 1 ):      # if tokens are general words
             self.d      = self.getSynonyms(delimiter_d)
         if( token_type == 2 ):      # if tokens are SQL keywords
             self.d      = self.getSQLKeywordSynonyms(delimiter_d)
-        # print("self.d", self.d)
 
 if __name__ == "__main__":
-    print(parseSQL("SupportedSQLCommands.txt"))
+    # print(parseSQL("SupportedSQLCommands.txt"))
     smObject = SimilarityObject(parseSQL("SupportedSQLCommands.txt"), 2)
     # smObject = SimilarityObject(['Total_Receipts', 'party'], 1)
+    # print('minimum synsets:', wordnet.synsets('minimum'))
+    # for syn in wordnet.synsets('minimum'):
+    #     smObject.getSynonymInfo(syn)
+    # print('maximum synsets:', wordnet.synsets('maximum'))
+    # for syn in wordnet.synsets('maximum'):
+    #     smObject.getSynonymInfo(syn)
+    

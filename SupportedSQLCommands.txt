@@ -1,6 +1,7 @@
 sum
-group by
 sort 
 median 
 count 
 average
+max
+min

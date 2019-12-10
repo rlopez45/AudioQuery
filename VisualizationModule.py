@@ -37,11 +37,12 @@ class VisualizationModule(object):
         self.plot_titles = 'Dummy title'
         self.switch = 0
         
-    def dummy_plot_show(self):
-        self.plot.savefig('dummy_plot.png')
+    def plot_show(self):
+        
+        self.plot.savefig('plotshow.png')
         
     # given the whole dataframe to output a dictionary of possible chart type
-    def visualization_receommendation(self):
+    def visualization_recommendation(self):
         possible_chart_list = []
         chart_flag_dict = {'bar': 0, 'horizontal bar': 0, 'line': 0, 'histogram': 0, 'scatter' : 0}
         types_grouped  = self.df.columns.to_series().groupby(self.df.dtypes).groups
@@ -62,8 +63,12 @@ class VisualizationModule(object):
             if (('object' in type_dict)) :
                 chart_flag_dict['bar'] = 1
                 chart_flag_dict['horizontal bar'] = 1   
-       
-            if((len(type_dict.get('int64','empty')) + len(type_dict.get('float64','empty'))) > 1):
+            c= 0
+            for t in self.types:
+                if t in ['int64','float64']:
+                    c = c + 1
+
+            if c >= 2: 
                 chart_flag_dict['scatter'] = 1
         
         for chart, flag in chart_flag_dict.items():  
@@ -224,16 +229,16 @@ class VisualizationModule(object):
 
         if ctype == 'histogram':
             return self.make_histogram(sub_df)         
-
-        # if tag == 1: 
-        #     print("\nStep 3: Visualization Generated Succeefully!")
-        # if tag == 0:
-        #     print("\nStep 3: visulization Generating failed :(")
-
     
 
     def make_bar(self, test_df):
 
+        f, axes = self.plot.subplots(figsize = (18,7))
+        f, axes = plt.subplots(figsize = (18,7))
+        self.f =f
+        self.axes = axes
+        sns.set(style="whitegrid")
+        
         self.current_sub_df_for_chart = test_df
         col_lists = list(test_df.columns)
         col_types = test_df.dtypes
@@ -249,26 +254,28 @@ class VisualizationModule(object):
 
         if (x_axis != '') & (y_axis != ''):
             #print("Columns for bar chart: {}".format(col_lists))
-            sns.set(style="whitegrid")
-            f, axes = plt.subplots(figsize = (18,7))
-            self.f =f
-            self.axes = axes
+            
             if self.switch == 1:
                 sns.barplot(y=x_axis, x=y_axis, data=test_df)
-                self.switch = 0          
+                self.switch =2          
             else:
                 sns.barplot(x=x_axis, y=y_axis, data=test_df)            
-            #self.plot.savefig('bar.png')
+            self.plot.savefig('bar.png')
             self.current_chart_type = 'bar'
         
-        else:
-            self.plot.figure()
+        self.plot = plt
 
         return self.plot 
 
     
     def make_horizontal_bar(self, test_df):
         
+        f, axes = self.plot.subplots(figsize = (18,7))
+        f, axes = plt.subplots(figsize = (18,7))
+        self.f =f
+        self.axes = axes
+        sns.set(style="whitegrid")
+
         self.current_sub_df_for_chart = test_df
         col_lists = list(test_df.columns)
         col_types = test_df.dtypes
@@ -284,26 +291,28 @@ class VisualizationModule(object):
 
         if (x_axis != '') & (y_axis != ''):    
             print("\nColumns for horizontal bar chart: {}".format(col_lists))
-            sns.set(style="whitegrid")
-            f, axes = plt.subplots(figsize = (18,7))
-            self.f =f
-            self.axes = axes
+            
+            
             if self.switch == 1:
                 sns.barplot(y=x_axis, x=y_axis, data=test_df)
-                self.switch = 0
+                self.switch =2
             else:
                 sns.barplot(x=x_axis, y=y_axis, data=test_df)
             #plt.savefig('horizontal_bar.png')
-            self.current_chart_type = 'horizontal_bar'
+            self.current_chart_type = 'horizontal bar'
             
-        else:
-            self.plot.figure()
         
         return self.plot
 
     # default take two column df 
     def make_scatter(self, test_df):
         
+        f, axes = self.plot.subplots(figsize = (18,7))
+        f, axes = plt.subplots(figsize = (18,7))
+        self.f =f
+        self.axes = axes
+        sns.set(style="whitegrid")
+
         self.current_sub_df_for_chart = test_df
         col_lists = list(test_df.columns)
         col_types = test_df.dtypes
@@ -314,30 +323,27 @@ class VisualizationModule(object):
         for t in col_types: 
             
             if t in ['int64','float64']:
-                c = c+1          
+                x_axis = col_types[col_types==t].index[0]
+                y_axis = col_types[col_types==t].index[1]
+              
         
-        if (c==2):
-            sub_col_lists = list(test_df)   
-            x_axis = sub_col_lists[0]
-            y_axis = sub_col_lists[1]
+        # if (c==2):
+        #     sub_col_lists = list(test_df)   
+        #     x_axis = sub_col_lists[0]
+        #     y_axis = sub_col_lists[1]
      
 
         if (x_axis != '') & (y_axis != ''):     
             print(">>>\nColumns for simple scatter plot are: {}".format(col_lists))
-            sns.set(style="whitegrid")
-            f, axes = plt.subplots(figsize = (18,7))
-            self.f =f
-            self.axes = axes
+        
             if self.switch == 1:
                 sns.barplot(y=x_axis, x=y_axis, data=test_df)
-                self.switch = 0
+                self.switch =2
             else:
                 sns.barplot(x=x_axis, y=y_axis, data=test_df)
-            #self.plot.savefig('scatter.png')
+            self.plot.savefig('scatter.png')
             self.current_chart_type = 'scatter'
         
-        else:
-            self.plot.figure()
         
         return self.plot
 
@@ -345,6 +351,12 @@ class VisualizationModule(object):
     # TODO: fix the bug here    
     def make_line(self, test_df):
         
+        f, axes = self.plot.subplots(figsize = (18,7))
+        f, axes = plt.subplots(figsize = (18,7))
+        self.f =f
+        self.axes = axes
+        sns.set(style="whitegrid")
+
         self.current_sub_df_for_chart = test_df
         col_lists = list(test_df.columns)
         col_types = test_df.dtypes
@@ -361,22 +373,23 @@ class VisualizationModule(object):
 
         if (x_axis != '') & (y_axis != ''):
             print("\nColumns for simple line chart are: {}".format(self.col_lists))
-            sns.set(style="whitegrid")
-            f, axes = plt.subplots(figsize = (18,7))
-            self.f =f
-            self.axes = axes
+
             sns.lineplot(x=x_axis, y=y_axis, data=test_df) 
             #self.plot.savefig('line.png')
             self.current_chart_type = 'line'
-        
-        else:
-            self.plot.figure()
+
 
         return self.plot
     
     # default to take one column df
     def make_histogram(self, test_df):
         
+        f, axes = self.plot.subplots(figsize = (18,7))
+        f, axes = plt.subplots(figsize = (18,7))
+        self.f =f
+        self.axes = axes
+        sns.set(style="whitegrid")
+
         self.current_sub_df_for_chart = test_df
         col_types = test_df.dtypes
         x_axis = ''
@@ -389,34 +402,31 @@ class VisualizationModule(object):
 
         if (x_axis != ''): 
             print("Columns for histogram chart are: {}".format(self.col_lists))
-            sns.set(style="whitegrid")
-            f, axes = plt.subplots(figsize = (18,7))
-            self.f =f
-            self.axes = axes
+            
             sns.distplot(test_df) 
             #self.plot.savefig('histogram.png')
             self.current_chart_type = 'histogram'
-        
-        else:
-            self.plot.figure()
+
 
         return self.plot
 
 
-    def visualization_modification(self, mid):
+    def visualization_modification(self, mid, placehoder):
 
         tag = 0
         # 1: Add title
         # before running 1, user need to input a title
         if mid == 1:
+            self.plot_titles = placehoder
             self.plot.title(self.plot_titles)
             self.plot.savefig('with_title.png')
-            tag = 1
+            
 
         # 2: Switch X,Y Axis
         if mid == 2:
             
-            if self.current_chart_type in ['bar', 'horizontal_bar','scatter']:
+            if self.current_chart_type in ['bar', 'horizontal bar','scatter']:
+                print (self.current_chart_type)
                 self.switch = 1
                 self.dataset_to_visualization(list(self.current_sub_df_for_chart.columns), self.current_chart_type)
                 tag =1
@@ -447,9 +457,10 @@ if __name__ == "__main__":
     #module start here
 
     
-    vm = VisualizationModule(bar_test_df)
-    #vm.dummy_plot_show()
-    type_dict = vm.visualization_receommendation()
+    vm = VisualizationModule(scatter_test_df)
+    # vm.make_scatter(scatter_test_df)
+    # # vm.dummy_plot_show()
+    type_dict = vm.visualization_recommendation()
     print('The potential chart types for this dataset: {}'.format(type_dict))
     type_input = input("Step 1: Which chart visualization you want? provide the number\n>>>")
 
@@ -469,7 +480,8 @@ if __name__ == "__main__":
     print(vm.dataset_to_visualization(potential_columns_combinations_dict[int(columns_input)], vm.possible_chart_dict[chart_id]))
     print("Potential Modification choice: {}".format(vm.modify_dict))
     mod_input = input("Step 3: Which modification you want? Choose the number\n>>>")
-    vm.visualization_modification(int(mod_input))
-    #vm.visualization_to_modification()
+    vm.visualization_modification(int(mod_input), 'Title of the Chart')
+    print(vm.switch)
+    vm.plot_show()
     
 

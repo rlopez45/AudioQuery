@@ -366,11 +366,13 @@ class SimilarityModule(object):
             sqlObj[ 'orderbyColumns' ],
             sqlObj[ 'orderbyColumnToAscDescMap' ] )
         sqlCommand = smObj.formSQLCommand( dbHelper )
+        print('sqlCommand:', sqlCommand)
         return sqlCommand
         
 if __name__ == "__main__":
     dfName      = 'data'
     df = readDf("data\cand_summary.txt", delimiter = "|")
+    # df = readDf("data\dist_pop.txt", delimiter = "|")
     dbHelper    = dbHelper.dbHelper( df )
     columns     = dbHelper.getColumnNames()
     ob          = SimilarityModule(columns, dfName)
@@ -384,7 +386,8 @@ if __name__ == "__main__":
     # inputString = 'give me the total receipts in election year 2016 by affiliation' # doesnt work because receipts also has a value of 2016
     # inputString = 'give me the number of candidates in election year 2016 by affiliation'
     # inputString = 'find number of candidates and total receipts by affiliation'
-    inputString   = 'find number of candidates and total receipts by affiliation and year'
+    # inputString = 'find number of candidates and total receipts by affiliation and year'
+    inputString   = 'find the total population by state'
     sqlCommand    = ob.SQLSuggestion(inputString, dbHelper)
     outGen        = outGen.outputGen( df, sqlCommand )
     result        = outGen.getOutputDf()

@@ -33,9 +33,4 @@ SpeechToText examples: https://github.com/Uberi/speech_recognition/blob/master/e
 2. give me candidate counts by candidate id
 
 
-## Testing
-### List of Queries Tested:
-give me the total receipts for each affiliation
-give me the average of receipts by affiliation
-
 

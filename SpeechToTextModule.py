@@ -1,6 +1,7 @@
 import speech_recognition as sr 
 import time
 from os import path
+import nltk
 
 class SpeechToTextModule():
     
@@ -40,11 +41,43 @@ class SpeechToTextModule():
         print('Audio File Absolute Location: ', AUDIO_FILE)
         return AUDIO_FILE
 
+    def getVisualizationOptions( self, optionAudioFile = None ):
+        vizOptions = []
+        if optionAudioFile:
+            option = self.convertSpeechToText( optionAudioFile )
+            option = option.lower()
+            optionTokens = nltk.word_tokenize(option)
+            title = None
+            if( ('modify' in optionTokens or 'change' in optionTokens) and 'title' in optionTokens ):
+                for i in range(len(optionTokens)-1):
+                    if optionTokens[i] == 'to':
+                        titleTokens = optionTokens[i+1:len(optionTokens)]
+                        break
+                title = ' '.join(titleTokens)
+                print('Title: ', title)
+                return [1, title]
+            elif(('swap' in optionTokens or 'switch' in optionTokens or 'change' in optionTokens)
+            and ('x' in optionTokens or 'y' in optionTokens or 'axis' in optionTokens)):
+                return [2, None]
+            else:
+                print('Unknown option')
+                return [None, None]
+        else:
+            print('audioFile not provided')
+            return [None, None]
+
+
 if __name__ == "__main__":
-    print('\nSay Something, Microphone is recording...')
+    # print('\nSay Something, Microphone is recording...')
     stt   = SpeechToTextModule()
-    AUDIO_FILE = stt.loadAudioFile( "audio\Sample_Audio_1.wav" )
-    start = time.time()
-    text  = stt.convertSpeechToText( AUDIO_FILE )
-    end   = time.time() 
-    print("Time Taken(s): ", end-start)
+    # AUDIO_FILE = stt.loadAudioFile( "audio\Sample_Audio_1.wav" )
+    # start = time.time()
+    # text  = stt.convertSpeechToText( AUDIO_FILE )
+    # end   = time.time() 
+    # print("Time Taken(s): ", end-start)
+
+    # changeTitleAudio = stt.loadAudioFile( "audio\Sample_Change_Title.wav" )
+    changeAxisAudio = stt.loadAudioFile( "audio\Sample_Change_XY_Axis.wav" )
+    options = stt.getVisualizationOptions( optionAudioFile = changeAxisAudio )
+    print('Result Options: ', options)
+

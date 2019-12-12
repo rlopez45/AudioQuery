@@ -65,19 +65,3 @@ class SpeechToTextModule():
         else:
             print('audioFile not provided')
             return [None, None]
-
-
-if __name__ == "__main__":
-    # print('\nSay Something, Microphone is recording...')
-    stt   = SpeechToTextModule()
-    # AUDIO_FILE = stt.loadAudioFile( "audio\Sample_Audio_1.wav" )
-    # start = time.time()
-    # text  = stt.convertSpeechToText( AUDIO_FILE )
-    # end   = time.time() 
-    # print("Time Taken(s): ", end-start)
-
-    # changeTitleAudio = stt.loadAudioFile( "audio\Sample_Change_Title.wav" )
-    changeAxisAudio = stt.loadAudioFile( "audio\Sample_Change_XY_Axis.wav" )
-    options = stt.getVisualizationOptions( optionAudioFile = changeAxisAudio )
-    print('Result Options: ', options)
-

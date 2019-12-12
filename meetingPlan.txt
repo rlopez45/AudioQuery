@@ -1,0 +1,11 @@
+what is there left to do:
+get visualization up to speed
+get similarity working 
+execute sql 
+make a dataframe from sql output
+main script
+
+design frontend 
+what to focus on meeting:
+designing frontend
+

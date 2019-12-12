@@ -1,0 +1,75 @@
+#container{
+    text-align: center;
+    border-color: black;
+    border-style: solid;
+}
+
+#title{
+    text-align: left;
+    border-color: black;
+    border-style: solid;
+    background-color: #71f0f5;
+}
+
+#uploadCsv {
+    border-color: black;
+    border-style: solid;
+}
+
+#uploadAudio {
+    border-color: black;
+    border-style: solid;
+}
+
+#tablePreview {
+    border-color: black;
+    border-style: solid;
+}
+
+#visualization{
+    border-color: black;
+    border-style: solid;
+}
+
+#left {
+    display: inline-block;
+    border-color: black;
+    border-style: solid;
+    width: 40%;
+}
+#right {
+    display: inline-block;
+    border-color: black;
+    border-style: solid;
+    width: 40%;
+}
+#modifyVisualization{
+    border-color: black;
+    border-style: solid;
+}
+
+#textOptions{
+    display: inline-block;
+    border-color: black;
+    border-style: solid;
+    width: 25%;
+}
+
+#uploadModify{
+    display: inline-block;
+    border-color: black;
+    border-style: solid;
+    width: 25%;
+}
+
+#reset {
+    display: inline-block;
+    border-color: black;
+    border-style: solid;
+    width: 25%
+}
+#footer {
+    border-color: black;
+    border-style: solid;
+}
+

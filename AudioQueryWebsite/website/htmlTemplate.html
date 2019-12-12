@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang = "en">
+	<head>
+		<title>Audio Query</title>
+		{% load static %}
+		<link rel="stylesheet" href = "{% static 'website/style.css' %}" type="text/css" >
+	</head>
+	<div id = container>
+		<div id = title>
+			<h1>Audio Query</h1>
+		</div>
+
+		<div id = uploadCsv>
+			<h2>Upload csv</h2>
+
+			<form method = "post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<input type="file" name="csvData">
+				<button type = "submit">Upload file</button>
+			</form>
+		</div>
+
+		<div id = uploadAudio>
+				
+			<h2>Upload audio wav file</h2>
+
+			<form method = "post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<input type="file" name="audioData">
+				<button type = "submit">Upload file</button>
+			</form>
+
+		</div>
+
+		<div id = tablePreview>
+
+			<h2>Table Preview</h2>
+
+			<div id = "preview">
+				{% load static %}
+				<img src= "{% static 'website/tablePreview.jpg' %}" style = 'height: 100%; width: 100%; object-fit: contain;'>
+			</div>
+
+		</div>
+
+		<div id = "runQuery">
+				<form method = "post" >
+					{% csrf_token %}
+					<input type="submit" name="run">
+				</form>
+		</div>
+		
+		<div id = visualization>
+
+			<div id = left>
+
+				<div id = chartTypes>
+
+					<h2>Select a chart type</h2>
+
+					<div id= chartText>
+						{% load static %}
+						<img src= "{% static 'website/chartText.jpg' %}" style = 'height: 100%; width: 100%; object-fit: contain;'>		
+
+					</div>
+					<div id = chartInput>
+						<form method = "post" enctype="multipart/form-data">
+							{% csrf_token %}
+							<input type="file" name="chartInput">
+							<button type = "submit">Upload file</button>
+						</form>
+					</div>
+					
+				</div>
+
+				<div id = selectColumns>
+					
+					<h2>Select your columns</h2>
+					<div id= chartText>
+							{% load static %}
+							<img src= "{% static 'website/colText.jpg' %}" style = 'height: 100%; width: 100%; object-fit: contain;'>		
+					</div>
+					<div id = colInput>
+						<form method = "post" enctype="multipart/form-data">
+								{% csrf_token %}
+								<input type="file" name="colInput">
+								<button type = "submit">Upload file</button>
+							</form>
+						</div>
+				</div>
+			</div>
+			<div id = right>
+				<h2>Visualization</h2>
+				<div id= chartText>
+						{% load static %}
+						<img src= "{% static 'website/visualization.jpg' %}" style = 'height: 100%; width: 100%; object-fit: contain;'>		
+				</div>
+			</div>
+
+		</div>
+
+		<div id =modifyVisualization>
+
+			<h2>Modify Your Visualization</h2>
+			
+			<div id = uploadModify>
+
+				<h2>Upload a wav file to modify the visualization</h2>
+
+				<form method = "post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="file" name="modifyData">
+					<button type = "submit">Upload file</button>
+				</form>
+
+			</div>
+
+		</div>
+
+		<div id = footer>
+			<h3>
+				This project was created by Ricardo Lopez, Monisha 
+				Pushpanathan, and Mia Zhuoqiao Hong
+			</h3>
+		</div>
+
+
+	</div>
+</html>

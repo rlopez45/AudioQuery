@@ -1,0 +1,48 @@
+#container{
+    text-align: center;
+    border-color: black;
+    border-width: 100px;
+}
+
+#titleBar {
+    background-color: white;
+    text-align: left;
+    border-color: black;
+}
+#Upload {
+    background-color: white;
+    border-color: black;
+}
+
+#userOptions {
+    width: 100%;
+    text-align: center;
+    
+}
+#table {
+    display: inline-block;
+    margin: 0 auto;
+    padding: 3px;
+    width: 30%;
+    vertical-align: top;
+}
+#visualization {
+    display: inline-block;
+    margin: 0 auto;
+    padding: 3px;
+    width: 30%;
+    vertical-align: top;
+}
+#errorOptions {
+    display: inline-block;
+    margin: 0 auto;
+    padding: 3px;
+    width: 30%;
+    vertical-align: top;
+}
+
+#footer {
+    background-color: white;
+    text-decoration-color: white;
+    border-color: black;
+}
